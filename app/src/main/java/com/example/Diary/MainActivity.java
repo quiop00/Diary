@@ -21,23 +21,33 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
+
 public class MainActivity extends AppCompatActivity {
     SignInButton signInButton;
     TextView textView, tvTerm;
     public FirebaseAuth firebaseAuth;
     public GoogleApiClient googleApiClient;
-
+    private DatabaseReference mDataReference;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         init();
+
         // Creating and Configuring Google Sign In object.
         GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
@@ -82,8 +92,11 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> AuthResultTask) {
                         if (AuthResultTask.isSuccessful()) {
-                            FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
-                            Toast.makeText(MainActivity.this, "Auth thanh cong: " + firebaseUser.getEmail(), Toast.LENGTH_LONG).show();
+                            //FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+                            Toast.makeText(MainActivity.this, "Auth thanh cong: " + firebaseAuth.getCurrentUser().getDisplayName(), Toast.LENGTH_LONG).show();
+                            Intent intent=new Intent(MainActivity.this,UserActivity.class);
+                            intent.putExtra("user",firebaseAuth.getCurrentUser().getEmail());
+                            startActivity(intent);
                         } else {
                             Toast.makeText(MainActivity.this, "Something Went Wrong", Toast.LENGTH_LONG).show();
                         }
